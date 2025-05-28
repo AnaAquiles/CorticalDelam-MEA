@@ -1,6 +1,6 @@
 # 🧠 Cortical Dyslamination Evaluation with MEA Electrode Classification
 
-Welcome to a neuroscience-powered toolkit designed to evaluate **cortical delamination** through **multi-electrode array (MEA)** signal analysis. This repository contains all the code used in our study to assess signal variability, oscillatory patterns, and electrode behavior — offering a modular, flexible framework for brain signal exploration.
+Welcome to a neuroscience-powered toolkit designed to evaluate **cortical delamination** through **multi-electrode array (MEA)** signal analysis. This repository contains all the code used in our study to assess signal variability, oscillatory patterns, and electrode behavior, offering a modular, flexible framework for brain signal exploration.
 
 ---
 
@@ -8,7 +8,7 @@ Welcome to a neuroscience-powered toolkit designed to evaluate **cortical delami
 
 We believe that understanding baseline electrical activity is key to characterizing **oscillatory heterogeneity**, which can signal early markers of pathological responses like seizures. While this work focuses on cortical dysplasia and delamination, the analysis pipeline can be generalized to other models and signal processing tasks.
 
-So dive in, try it out — and feel free to reach out if you hit any roadblocks or have questions! 💬
+So dive in, try it out, and feel free to reach out if you hit any roadblocks or have questions! 💬
 
 ---
 
@@ -47,5 +47,5 @@ Want to go deeper? Here are some optional — but powerful — scripts:
 ## 🤝 Contributions & Questions
 
 If you encounter any issues, ideas, or questions, please feel free to open an issue or contact me directly. Collaboration and curiosity are always welcome!
-anaaquiles@ciencias.unam.mx/ana.aquiles@igf.cnrs.fr
+You can reach me at: anaaquiles@ciencias.unam.mx/ana.aquiles@igf.cnrs.fr
 ---
