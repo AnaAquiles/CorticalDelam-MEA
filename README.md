@@ -36,17 +36,22 @@ Run [`ElectrodeClustering.py`](./ElectrodeClustering.py) to cluster electrodes b
 
 ## 🧪 Explore Signal Dynamics (Bonus Tools)
 
-Want to go deeper? Here are some optional — but powerful — scripts:
+Before diving deep, I highly encourage you to explore [`CommonBand.py`](./CommonBand.py) — a method for extracting **common oscillatory activity** across your recordings. This is especially useful when comparing conditions like **control vs. disease**, as it reveals consistent rhythms that might otherwise be hidden 🧭.
 
-- [`SignalClassification.py`](./SignalClassification.py): Explore how signal patterns evolve over time using the electrode classes.
-- [`MI_signalModules.py`](./MI_signalModules.py): Analyze **mutual information** between features in your signals.
-- [`DirectMI.py`](./DirectMI.py): Estimate **directed transfer entropy** to uncover temporal dependencies and potential causal flow 🔁
+Want to go further? Check out these optional **but powerful** scripts:
+
+- [`SignalClassification.py`](./SignalClassification.py): Track how signal dynamics evolve over time using the electrode class labels.
+- [`MI_signalModules.py`](./MI_signalModules.py): Quantify **mutual information** between different signal features.
+- [`DirectMI.py`](./DirectMI.py): Reveal directed relationships in your data using **transfer entropy** 🔁
 
 ---
 
 ## 🤝 Contributions & Questions
 
-If you encounter any issues, ideas, or questions, please feel free to open an issue or contact me directly. Collaboration and curiosity are always welcome!
-You can reach me at: anaaquiles@ciencias.unam.mx/ana.aquiles@igf.cnrs.fr
+Found a bug? Have an idea? Curious about applying this to your own dataset? Don’t hesitate to get in touch — collaboration and curiosity are always welcome! 🌱
+
+📫 **Contact:**  
+- anaaquiles@ciencias.unam.mx  
+- ana.aquiles@igf.cnrs.fr  
 
 ---
