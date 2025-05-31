@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from sklearn.cluster import MeanShift, estimate_bandwidth
 import pandas as pd
+from collections import Counter
+
 
 """
           This code will need some outputs from SlepianMultitapers.py
@@ -83,130 +85,6 @@ clustering = MeanShift(bandwidth=bandwidth).fit(X.T)
 labels = clustering.labels_
 center = clustering.cluster_centers_
 
-
-###     Epsilon metric 
-
-import matplotlib.pyplot as plt
-import random
-from collections import defaultdict
-
-#  MEA PATTERN
-pattern = [
-    "01111110",
-    "11111111",
-    "11111111",
-    "1111111",
-    "01111111",
-    "11111111",
-    "11111111",
-    "01111110"
-]
-
-
-spacing = 1.0
-hex_height = spacing
-hex_width = spacing * (3 ** 0.5) / 2
-
-coordinates = []
-colors = [ 'green', 'blue', 'orange'] 
-
-for row_idx, row in enumerate(pattern):
-    for col_idx, char in enumerate(row):
-        if char == "1":
-            x = col_idx * hex_width + (hex_width / 2 if row_idx % 2 == 1 else 0)
-            y = row_idx * hex_height * 0.87
-            color = random.choice(colors)
-            coordinates.append((x, y, color))
-
-
-positions = np.array([[x, y] for x, y, c in coordinates])
-
-n_clusters = len(np.unique(labels))
-
-cluster_colors = defaultdict(list)
-
-for i, label in enumerate(labels):
-    cluster_colors[label].append(coordinates[i][2])  # Append the color
-
-
-epsilons = []
-for cluster_id, color_list in cluster_colors.items():
-    n_points = len(color_list)
-    n_colors = len(set(color_list))
-    epsilon_i = n_colors / n_points if n_points > 0 else 0
-    epsilons.append(epsilon_i)
-
-epsilon_metric = sum(epsilons) / n_clusters
-
-
-
-#        EXPLORATORY PLOTS
-
-# 2 first MODES of the dimension reduction 
-plt.style.use('fivethirtyeight')
-plt.figure(figsize = (10,10))
-plt.scatter(dataF['PC1'],dataF['PC2'],
-            c = np.arange(0,electrodes,1), s =300,  
-            cmap = 'Set2', alpha = 0.9)
-plt.colorbar()
-plt.box(False)
-
-plt.style.use('fivethirtyeight')
-plt.figure()
-plt.plot(dataF['PC1'].values, label = 'Mode 1')
-plt.plot(dataF['PC2'].values, label = 'Mode 2')
-plt.legend()
-
-
-# Cumulate variance
-
-plt.figure()
-plt.subplot(121)
-plt.bar(range(60), var_exp, color= 'k',alpha=0.3,
-        align='center', label='Individual variance')
-plt.ylim(0,0.2)
-plt.ylabel('Proportion of variance')
-plt.xlabel('Modes')
-plt.legend(loc='best')
-plt.box(False)
-plt.grid(False)
-plt.subplot(122)
-plt.step(range(60), cum_var_exp, where='mid',
-         label='Cumulate variance',color= 'k',alpha = 0.3)
-plt.ylabel('Proportion of variance')
-plt.xlabel('Modes')
-plt.legend(loc='best')
-plt.box(False)
-plt.grid(False)
-plt.show()
-
-#  Scatter projection of the  two principal components of the frequency covariation
-
-plt.figure(figsize = (6,5))
-plt.scatter(dataF['PC1'],dataF['PC2'], c = labels.astype(float)*0.5,  s =300,
-            alpha =0.9)
-plt.scatter(center[:,0], center[:,1], c= 'r', marker = 'x', alpha = 0.9)
-plt.title("Principal Components projection geometic space")
-plt.colorbar()
-plt.box(False)
-
-plt.figure(figsize=(7, 6))
-for i, (x, y, color) in enumerate(coordinates):
-    plt.scatter(x, y, c=color, s=120, edgecolor='black')
-    plt.text(x, y + 0.2, str(labels[i]), ha='center', fontsize=8)
-
-plt.title(f'Hexagonal Array with MeanShift Clusters\nϵ = {epsilon_metric:.4f}')
-plt.gca().set_aspect('equal')
-plt.grid(True)
-plt.show()
-
-#%%
-
-import numpy as np
-import matplotlib.pyplot as plt
-from collections import Counter
-
-# Your MEA hexagonal pattern (1s indicate electrode positions)
 pattern = [
     "01111110",
     "11111111",
@@ -218,65 +96,109 @@ pattern = [
     "01111110"
 ]
 
-# This should come from your clustering algorithm (e.g., Mean Shift)
-# For example, labels = [0, 1, 1, 2, ...] for each electrode in the same order as pattern
-# REPLACE this dummy example with your actual clustering output:
-# labels = [...]  # should have length equal to number of '1's in the pattern
-
-# Setup MEA layout
 spacing = 1.0
-hex_height = spacing
-hex_width = spacing * (3 ** 0.5) / 2
+hex_height = spacing * (3 ** 0.5) / 2
+hex_width = spacing
 
-coordinates = []
 positions = []
-index_map = []
-
 for row_idx, row in enumerate(pattern):
     for col_idx, char in enumerate(row):
         if char == "1":
-            x = col_idx * hex_width + (hex_width / 2 if row_idx % 2 == 1 else 0)
-            y = row_idx * hex_height * 0.87
-            coordinates.append((x, y))
+            x = col_idx * hex_width * 1.5
+            y = row_idx * hex_height
             positions.append((x, y))
-            index_map.append(len(index_map))  # 0, 1, 2, ... for each electrode
 
-# Count how many times each label appears
-label_counts = Counter(labels)
-unique_labels = sorted(label_counts.keys())
+# Assign colors per label using a categorical colormap
+unique_labels = sorted(set(labels))
+n_clusters = len(unique_labels)
+cmap = plt.cm.get_cmap('viridis', n_clusters)
+colors = [cmap(label) for label in labels]
 
-# Normalize counts for color mapping
-max_count = max(label_counts.values())
-norm_counts = [label_counts[label] / max_count for label in labels]
+# Epsilon metric calculation
+label_history = [[label] for label in labels]  # Simulating label history
 
-# Choose a color map: from low frequency to high frequency
-cmap = plt.cm.viridis  # You could also try 'plasma', 'inferno', 'coolwarm', etc.
-colors = [cmap(value) for value in norm_counts]
+L = len(label_history)
+n_points = [len(history) for history in label_history]
+n_colors = [len(set(history)) for history in label_history]
 
+epsilon = sum([n_points[i] / n_colors[i] for i in range(L)]) / n_clusters if n_clusters > 0 else 0
+epsilon_normalized = epsilon / len(labels)  # Normalize epsilon to be between 0 and 1
+print(f"Epsilon diversity metric (ε): {epsilon_normalized:.4f}")
 
-
-
-epsilons = []
-for cluster_id, color_list in cluster_colors.items():
-    n_points = len(color_list)
-    n_colors = len(set(color_list))
-    epsilon_i = n_colors / n_points if n_points > 0 else 0
-    epsilons.append(epsilon_i)
-
-epsilon_metric = sum(epsilons) / n_clusters
-
-
-
-
-
-# Plotting
+# Plotting the MEA
 plt.figure(figsize=(8, 8))
 for i, (x, y) in enumerate(positions):
-    plt.scatter(x, y, s=400, color=colors[i], edgecolor='k')
-plt.title("MEA Electrode Activity by Cluster Frequency")
+    plt.scatter(x, y, s=400, color=colors[i], edgecolor='w')
+
+# Add legend with counts
+label_counts = Counter(labels)
+for label in unique_labels:
+    plt.scatter([], [], color=cmap(label), label=f"Cluster {label} ({label_counts[label]})")
+plt.legend(title='Clusters', loc='upper right')
+
+plt.title(f"MEA Cluster Assignment\nEpsilon (ε) = {epsilon_normalized:.3f}")
 plt.axis('equal')
 plt.axis('off')
-plt.colorbar(plt.cm.ScalarMappable(cmap=cmap), label='Relative Frequency')
 plt.show()
 
+
+# #        EXPLORATORY PLOTS
+
+# # 2 first MODES of the dimension reduction 
+# plt.style.use('fivethirtyeight')
+# plt.figure(figsize = (10,10))
+# plt.scatter(dataF['PC1'],dataF['PC2'],
+#             c = np.arange(0,electrodes,1), s =300,  
+#             cmap = 'Set2', alpha = 0.9)
+# plt.colorbar()
+# plt.box(False)
+
+# plt.style.use('fivethirtyeight')
+# plt.figure()
+# plt.plot(dataF['PC1'].values, label = 'Mode 1')
+# plt.plot(dataF['PC2'].values, label = 'Mode 2')
+# plt.legend()
+
+
+# # Cumulate variance
+
+# plt.figure()
+# plt.subplot(121)
+# plt.bar(range(60), var_exp, color= 'k',alpha=0.3,
+#         align='center', label='Individual variance')
+# plt.ylim(0,0.2)
+# plt.ylabel('Proportion of variance')
+# plt.xlabel('Modes')
+# plt.legend(loc='best')
+# plt.box(False)
+# plt.grid(False)
+# plt.subplot(122)
+# plt.step(range(60), cum_var_exp, where='mid',
+#          label='Cumulate variance',color= 'k',alpha = 0.3)
+# plt.ylabel('Proportion of variance')
+# plt.xlabel('Modes')
+# plt.legend(loc='best')
+# plt.box(False)
+# plt.grid(False)
+# plt.show()
+
+# #  Scatter projection of the  two principal components of the frequency covariation
+
+# plt.figure(figsize = (6,5))
+# plt.scatter(dataF['PC1'],dataF['PC2'], c = labels.astype(float)*0.5,  s =300,
+#             alpha =0.9)
+# plt.scatter(center[:,0], center[:,1], c= 'r', marker = 'x', alpha = 0.9)
+# plt.title("Principal Components projection geometic space")
+# plt.colorbar()
+# plt.box(False)
+
+# plt.figure(figsize=(7, 6))
+# for i, (x, y, color) in enumerate(coordinates):
+#     plt.scatter(x, y, c=color, s=120, edgecolor='black')
+#     plt.text(x, y + 0.2, str(labels[i]), ha='center', fontsize=8)
+
+# plt.title(f'Hexagonal Array with MeanShift Clusters\nϵ = {epsilon_metric:.4f}')
+# plt.gca().set_aspect('equal')
+# plt.grid(True)
+# plt.show()
 
