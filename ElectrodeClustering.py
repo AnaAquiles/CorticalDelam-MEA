@@ -59,13 +59,13 @@ def FrequencyCovariation_E(PowerSpec, Frequencies, electrodes):
 
     return eigval_r, eigvec_r
 
-eigval, eigvec = FrequencyCovariation_E()
+eigval, eigvec = FrequencyCovariation_E(PowerSpec, Frequencies, electrodes)
 
 ### plot variance explained
 
-tot = sum(eigval[0,:])
-var_exp = [(i / tot) for i in sorted(eigval[0,:], reverse=True)]
-cum_var_exp = np.cumsum(var_exp)
+# tot = sum(eigval[0,:])
+# var_exp = [(i / tot) for i in sorted(eigval[0,:], reverse=True)]
+# cum_var_exp = np.cumsum(var_exp)
 
 
 d = {'Electrodes': [], 'Layer' :[]}      #
@@ -77,7 +77,7 @@ dataF['PC2'] = np.abs(eigvec[:,1].T)     #
 ####        MeanShift CLUSTERING
 
 X = np.array((dataF['PC1'].values, dataF['PC2'].values))
-bandwidth = estimate_bandwidth(X.T, quantile = 0.45, n_samples=80) 
+bandwidth = estimate_bandwidth(X.T, quantile = 0.65, n_samples=80) 
 clustering = MeanShift(bandwidth=bandwidth).fit(X.T)
 
 labels = clustering.labels_
@@ -95,8 +95,8 @@ pattern = [
     "01111110",
     "11111111",
     "11111111",
-    "11111111",
-    "11111111",
+    "1111111",
+    "01111111",
     "11111111",
     "11111111",
     "01111110"
@@ -124,6 +124,7 @@ positions = np.array([[x, y] for x, y, c in coordinates])
 n_clusters = len(np.unique(labels))
 
 cluster_colors = defaultdict(list)
+
 for i, label in enumerate(labels):
     cluster_colors[label].append(coordinates[i][2])  # Append the color
 
@@ -198,3 +199,84 @@ plt.title(f'Hexagonal Array with MeanShift Clusters\nϵ = {epsilon_metric:.4f}')
 plt.gca().set_aspect('equal')
 plt.grid(True)
 plt.show()
+
+#%%
+
+import numpy as np
+import matplotlib.pyplot as plt
+from collections import Counter
+
+# Your MEA hexagonal pattern (1s indicate electrode positions)
+pattern = [
+    "01111110",
+    "11111111",
+    "11111111",
+    "11111111",
+    "01111111",
+    "11111111",
+    "11111111",
+    "01111110"
+]
+
+# This should come from your clustering algorithm (e.g., Mean Shift)
+# For example, labels = [0, 1, 1, 2, ...] for each electrode in the same order as pattern
+# REPLACE this dummy example with your actual clustering output:
+# labels = [...]  # should have length equal to number of '1's in the pattern
+
+# Setup MEA layout
+spacing = 1.0
+hex_height = spacing
+hex_width = spacing * (3 ** 0.5) / 2
+
+coordinates = []
+positions = []
+index_map = []
+
+for row_idx, row in enumerate(pattern):
+    for col_idx, char in enumerate(row):
+        if char == "1":
+            x = col_idx * hex_width + (hex_width / 2 if row_idx % 2 == 1 else 0)
+            y = row_idx * hex_height * 0.87
+            coordinates.append((x, y))
+            positions.append((x, y))
+            index_map.append(len(index_map))  # 0, 1, 2, ... for each electrode
+
+# Count how many times each label appears
+label_counts = Counter(labels)
+unique_labels = sorted(label_counts.keys())
+
+# Normalize counts for color mapping
+max_count = max(label_counts.values())
+norm_counts = [label_counts[label] / max_count for label in labels]
+
+# Choose a color map: from low frequency to high frequency
+cmap = plt.cm.viridis  # You could also try 'plasma', 'inferno', 'coolwarm', etc.
+colors = [cmap(value) for value in norm_counts]
+
+
+
+
+epsilons = []
+for cluster_id, color_list in cluster_colors.items():
+    n_points = len(color_list)
+    n_colors = len(set(color_list))
+    epsilon_i = n_colors / n_points if n_points > 0 else 0
+    epsilons.append(epsilon_i)
+
+epsilon_metric = sum(epsilons) / n_clusters
+
+
+
+
+
+# Plotting
+plt.figure(figsize=(8, 8))
+for i, (x, y) in enumerate(positions):
+    plt.scatter(x, y, s=400, color=colors[i], edgecolor='k')
+plt.title("MEA Electrode Activity by Cluster Frequency")
+plt.axis('equal')
+plt.axis('off')
+plt.colorbar(plt.cm.ScalarMappable(cmap=cmap), label='Relative Frequency')
+plt.show()
+
+
