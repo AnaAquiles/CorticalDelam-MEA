@@ -1,6 +1,6 @@
 # 🧠 Cortical Dyslamination Evaluation with MEA Electrode Classification
 
-Welcome to a neuroscience-powered toolkit designed to evaluate **cortical delamination** through **multi-electrode array (MEA)** signal analysis. This repository contains all the code used in our study to assess signal variability, oscillatory patterns, and electrode behavior, offering a modular, flexible framework for brain signal exploration.
+Welcome to a neuroscience-powered toolkit designed to evaluate **cortical delamination** through **multi-electrode array (MEA)** signal analysis. This repository contains all the code used in our study to [assess signal variability](https://www.biorxiv.org/content/10.1101/2025.06.16.659942v1), oscillatory patterns, and electrode behavior, offering a modular, flexible framework for brain signal exploration.
 
 ---
 
