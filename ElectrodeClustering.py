@@ -63,13 +63,6 @@ def FrequencyCovariation_E(PowerSpec, Frequencies, electrodes):
 
 eigval, eigvec = FrequencyCovariation_E(PowerSpec, Frequencies, electrodes)
 
-### plot variance explained
-
-# tot = sum(eigval[0,:])
-# var_exp = [(i / tot) for i in sorted(eigval[0,:], reverse=True)]
-# cum_var_exp = np.cumsum(var_exp)
-
-
 d = {'Electrodes': [], 'Layer' :[]}      #
 dataF = pd.DataFrame(d)                  #
 dataF['PC1'] = np.abs(eigvec[:,0].T)     #    # Select the number of principal component
@@ -142,7 +135,7 @@ plt.axis('off')
 plt.show()
 
 
-# #        EXPLORATORY PLOTS
+# #        EXPLORATORY PLOTS (uncomment for visualization)
 
 # # 2 first MODES of the dimension reduction 
 # plt.style.use('fivethirtyeight')
@@ -161,6 +154,10 @@ plt.show()
 
 
 # # Cumulate variance
+
+# tot = sum(eigval[0,:])
+# var_exp = [(i / tot) for i in sorted(eigval[0,:], reverse=True)]
+# cum_var_exp = np.cumsum(var_exp)
 
 # plt.figure()
 # plt.subplot(121)
