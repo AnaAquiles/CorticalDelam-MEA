@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Feb 22 19:12:46 2026
+
+@author:aquiles 
+"""
+
 
 '''
 
@@ -26,7 +33,7 @@ pair_map = {
     "2-3": "2↔3", "3-2": "2↔3",
 }
 df["Cluster_Pair"] = df["Direction"].map(pair_map)
-df["Group_Label"]  = df["Group"].map({1: "Eulaminated", 2: "Dyslaminated"})
+df["Group_Label"]  = df["Group"]
 
 cluster_pairs = sorted(df["Cluster_Pair"].unique())
 group_labels  = ["Eulaminated", "Dyslaminated"]
@@ -114,6 +121,7 @@ for i, pair in enumerate(cluster_pairs):
                     transform=ax.transAxes, color="grey", fontsize=8)
             ax.set_xticks([])
             continue
+        
 
         # ── Draw boxes per direction × group ─────────────────────────────────
         all_y = []
@@ -128,10 +136,21 @@ for i, pair in enumerate(cluster_pairs):
                 all_y.extend(vals)
 
         all_y = np.array(all_y)
+        
+        # ── Guard against empty subplots ──────────────────────────────────────
+        if len(all_y) == 0:
+            ax.text(0.5, 0.5, "no data", ha="center", va="center",
+                    transform=ax.transAxes, color="grey", fontsize=8)
+            ax.set_xticks([])
+            continue
+        
         y_range   = all_y.max() - all_y.min() if len(all_y) > 1 else 1
         y_top     = all_y.max() + y_range * 0.05
+        # y_range   = all_y.max() - all_y.min() if len(all_y) > 1 else 1
+        # y_top     = all_y.max() + y_range * 0.05
         step      = y_range * 0.14
         bracket_y = y_top
+        
 
         # ── (A) Control vs Treatment — per direction (black bracket) ──────────
         for d_idx, direction in enumerate(dirs):
