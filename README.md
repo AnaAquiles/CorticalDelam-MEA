@@ -18,7 +18,7 @@ Here’s a quick overview of the workflow:
 
 ### 1️⃣ Set Up Your Environment
 Make sure to install the required Python libraries in a fresh environment.  
-👉 You can use a `enviroment.yml` or a virtual environment setup.
+👉 You can use a [`enviroment.yml`](./enviroment.yml) or a virtual environment setup.
 
 ### 2️⃣ Convert Raw Data  
 Convert your acquisition software output to **HDF5** format using the [MCS Py Data Tools](https://github.com/multichannelsystems/McsPyDataTools).
